@@ -17,10 +17,9 @@
 # that can access the providers directly.
 # Once it's stabilized, we *may* consider opening up parts of the API, or we may
 # decide to just require users to use the public user-facing rules.
-visibility([
-    "//cc/toolchains/...",
-    "//tests/rule_based_toolchain/...",
-])
+#
+# NOTE(EngFlow): This is public for migration to rule-based toolchains.
+visibility("public")
 
 # Note that throughout this file, we never use a list. This is because mutable
 # types cannot be stored in depsets. Thus, we type them as a sequence in the
