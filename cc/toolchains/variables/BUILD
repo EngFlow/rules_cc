@@ -277,7 +277,7 @@ cc_variable(
 cc_variable(
     name = "linkstamp_paths",
     actions = ["//cc/toolchains/actions:link_actions"],
-    type = types.list(types.directory),
+    type = types.option(types.list(types.directory)),
 )
 
 cc_variable(
