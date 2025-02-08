@@ -26,10 +26,8 @@ load(
     legacy_with_feature_set = "with_feature_set",
 )
 
-visibility([
-    "//cc/toolchains/...",
-    "//tests/rule_based_toolchain/...",
-])
+# NOTE(EngFlow): This is public for migration to rule-based toolchains.
+visibility("public")
 
 # Note that throughout this file, we sort anything for which the order is
 # nondeterministic (eg. depset's .to_list(), dictionary iteration).
