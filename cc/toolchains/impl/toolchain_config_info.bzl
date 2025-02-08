@@ -17,10 +17,8 @@ load("//cc/toolchains:cc_toolchain_info.bzl", "ArtifactNamePatternInfo", "MakeVa
 load(":args_utils.bzl", "get_action_type")
 load(":collect.bzl", "collect_args_lists", "collect_features")
 
-visibility([
-    "//cc/toolchains/...",
-    "//tests/rule_based_toolchain/...",
-])
+# NOTE(EngFlow): This is public for migration to rule-based toolchains.
+visibility("public")
 
 _FEATURE_NAME_ERR = """The feature name {name} was defined by both {lhs} and {rhs}.
 
