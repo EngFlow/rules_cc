@@ -13,12 +13,14 @@
 # limitations under the License.
 """Implementation of the cc_toolchain rule."""
 
+load("//cc/common:cc_common.bzl", "cc_common")
 load(
     "//cc/toolchains:cc_toolchain_info.bzl",
     "ActionTypeSetInfo",
     "ArgsListInfo",
     "ArtifactNamePatternInfo",
     "FeatureSetInfo",
+    "MakeVariableInfo",
     "ToolConfigInfo",
     "ToolchainConfigInfo",
 )
@@ -59,6 +61,7 @@ def _cc_toolchain_config_impl(ctx):
         tool_map = ctx.attr.tool_map,
         args = ctx.attr.args,
         artifact_name_patterns = ctx.attr.artifact_name_patterns,
+        make_variables = ctx.attr.make_variables,
     )
 
     legacy = convert_toolchain(toolchain_config)
@@ -69,17 +72,21 @@ def _cc_toolchain_config_impl(ctx):
             ctx = ctx,
             action_configs = legacy.action_configs,
             artifact_name_patterns = legacy.artifact_name_patterns,
+            make_variables = legacy.make_variables,
             features = legacy.features,
             cxx_builtin_include_directories = legacy.cxx_builtin_include_directories,
             # toolchain_identifier is deprecated, but setting it to None results
             # in an error that it expected a string, and for safety's sake, I'd
             # prefer to provide something unique.
             toolchain_identifier = str(ctx.label),
+            # This can be accessed by users through
+            # @rules_cc//cc/private/toolchain:compiler to select() on the current
+            # compiler
+            compiler = ctx.attr.compiler,
+            target_cpu = ctx.attr.cpu,
             # These fields are only relevant for legacy toolchain resolution.
             target_system_name = "",
-            target_cpu = "",
             target_libc = "",
-            compiler = "",
             abi_version = "",
             abi_libc_version = "",
         ),
@@ -96,11 +103,14 @@ cc_toolchain_config = rule(
     # @unsorted-dict-items
     attrs = {
         # Attributes new to this rule.
+        "compiler": attr.string(default = ""),
+        "cpu": attr.string(default = ""),
         "tool_map": attr.label(providers = [ToolConfigInfo], mandatory = True),
         "args": attr.label_list(providers = [ArgsListInfo]),
         "known_features": attr.label_list(providers = [FeatureSetInfo]),
         "enabled_features": attr.label_list(providers = [FeatureSetInfo]),
         "artifact_name_patterns": attr.label_list(providers = [ArtifactNamePatternInfo]),
+        "make_variables": attr.label_list(providers = [MakeVariableInfo]),
         "_builtin_features": attr.label(default = "//cc/toolchains/features:all_builtin_features"),
     },
     provides = [ToolchainConfigInfo],

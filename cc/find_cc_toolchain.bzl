@@ -12,7 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """
 Helpers for CC Toolchains.
 
@@ -53,7 +52,14 @@ https://github.com/bazelbuild/bazel/issues/7260 is flipped (and support for old
 Bazel version is not needed), it's enough to only keep the toolchain type.
 """
 
+load("//cc/common:cc_common.bzl", "cc_common")
+
 CC_TOOLCHAIN_TYPE = Label("@bazel_tools//tools/cpp:toolchain_type")
+
+CC_TOOLCHAIN_ATTRS = {
+    # Needed for Bazel 6.x and 7.x compatibility.
+    "_cc_toolchain": attr.label(default = Label("@rules_cc//cc:current_cc_toolchain")),
+}
 
 def find_cc_toolchain(ctx, *, mandatory = True):
     """
@@ -105,7 +111,7 @@ def find_cpp_toolchain(ctx):
     """
     return find_cc_toolchain(ctx)
 
-def use_cc_toolchain(mandatory = False):
+def use_cc_toolchain(mandatory = True):
     """
     Helper to depend on the cc toolchain.
 
